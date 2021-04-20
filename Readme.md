@@ -9,6 +9,10 @@ SVRP Server Inspired HuD for QBUS Servers. I tried my level best to fix it, add 
 [Normal](https://cdn.discordapp.com/attachments/829799717691981854/834133413820497920/unknown.png) , 
 [CarHud](https://media.discordapp.net/attachments/829799717691981854/834133626090160178/unknown.png)
 
+### Setup
+- Stop all existing HUD and Related Scripts.
+- You need to Start a total of 3 Resources : **osm-carhud, osm-hud, and fh4map**. 
+
 ### Features 
 - Hunger and Thirst increases dynamically after every 60 seconds.
 - Stress System works when you keep firing for long. (High Speed System will come soon).
@@ -18,3 +22,4 @@ SVRP Server Inspired HuD for QBUS Servers. I tried my level best to fix it, add 
 ### Issues / Known Bugs
 - The Cash and Bank system has been adapted to Chat Messages and NOTIFY Functions due to the fact, that am NOOB at HTML and CSS and couldn't bring it to the top right of the screen. If someone fixes / makes that, please share. 
 
+#### I will provide support **ONLY FOR QBUS BASE**. Don't ask me for support directly for Customized / Renamed Cores.
