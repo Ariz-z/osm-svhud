@@ -182,3 +182,18 @@ AddEventHandler("hud:client:OnMoneyChange", function(type, amount, isMinus)
          QBCore.Functions.Notify('$'..amount..' Added to Your '..type..' Account','success', 5000)
     end
 end)
+
+Citizen.CreateThread(function()
+    while true do
+		 local wait = 1000
+        if QBCore ~= nil and isLoggedIn and QBHud.Show then
+            if IsPedInAnyVehicle(PlayerPedId(), false) then
+                speed = GetEntitySpeed(GetVehiclePedIsIn(PlayerPedId(), false)) * 3.6
+                if speed >= QBStress.MinimumSpeed then
+                    TriggerServerEvent('qb-hud:Server:UpdateStress', math.random(1, 2))
+                end
+            end
+        end
+        Citizen.Wait(wait)
+    end
+end)

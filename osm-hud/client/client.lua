@@ -1,5 +1,7 @@
 QBCore = nil
 
+isLoggedIn = true
+
 Citizen.CreateThread(function() 
     while true do
         Citizen.Wait(10)
@@ -13,10 +15,16 @@ Citizen.CreateThread(function()
     end
 end)
 
+RegisterNetEvent("QBCore:Client:OnPlayerUnload")
+AddEventHandler("QBCore:Client:OnPlayerUnload", function()
+    isLoggedIn = false
+end)
+
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
 end)
+
 
 local toghud = true
 
@@ -48,14 +56,8 @@ RegisterCommand('hud', function(source, args, rawCommand)
 	})
 end)
 
-RegisterNetEvent('hud:client:UpdateStress')
-AddEventHandler('hud:client:UpdateStress', function(newStress)
-    stress = newStress
-end)
-
 Citizen.CreateThread(function()
 	while true do
-	Citizen.Wait(1000)
 		if isLoggedIn then 
 			QBCore.Functions.GetPlayerData(function(PlayerData)
 				if PlayerData then
@@ -65,12 +67,8 @@ Citizen.CreateThread(function()
 				end
 			end)
 		end
+		Citizen.Wait(500)
 	end
-end)
-
-RegisterNetEvent('hud:client:UpdateStress')
-AddEventHandler('hud:client:UpdateStress', function(newStress)
-    stress = newStress
 end)
 
 RegisterNetEvent('hud:toggleui')
@@ -125,6 +123,7 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
+		if isLoggedIn then 
                 SendNUIMessage({
                     action = "updateStatusHud",
                     show = getShowHud(),
@@ -135,23 +134,13 @@ Citizen.CreateThread(function()
 					health = GetEntityHealth(PlayerPedId()) - 100,
 					oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
                     })
-        Citizen.Wait(1000)
+			Citizen.Wait(500)
+		else
+			Citizen.Wait(1000)
+		end
+
 	end
 end)
-
--- AddEventHandler("playerSpawned", function()
--- 	SendNUIMessage({
--- 		action = 'updateStatusHud',
--- 		show = getShowHud(),
--- 		health = GetEntityHealth(PlayerPedId()) - 100
--- 	})
-
--- 	SendNUIMessage({
--- 		action = 'updateStatusHud',
--- 		show = getShowHud(),
--- 		armour = GetPedArmour(PlayerPedId())
--- 	})
--- end)
 
 local stats = {
 	playerHealth = 0,
@@ -210,45 +199,8 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
---[[
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(5)
 
-		local ped = PlayerPedId()
-		local health = GetEntityHealth(ped)
-		local armor = GetPedArmour(ped)
-		local oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4
 
-		if health ~= stats.playerHealth then
-			stats.playerHealth = health
-			TriggerEvent("osm-gameplay:statUpdate", "health", stats.playerHealth)
-		end
-
-		if armor ~= stats.playerArmor then
-			stats.playerArmor = armor
-			TriggerEvent("osm-gameplay:statUpdate", "armor", stats.playerArmor)
-			if maySave then
-				TriggerServerEvent("osm-gameplay:setServerArmor", stats.playerArmor)
-			end
-		end
-
-		if oxygen ~= stats.playerOxygen then
-			stats.playerOxygen = oxygen
-			if IsPedSwimmingUnderWater(PlayerPedId()) then
-				TriggerEvent("osm-gameplay:statUpdate", "oxygen", stats.playerOxygen)
-			else
-				TriggerEvent("osm-gameplay:statUpdate", "oxygen", 0)
-			end
-		end
-
-		if IsPedBeingStunned(ped) then
-			SetPedMinGroundTimeForStungun(ped, timer)
-			SetPedCanRagdoll(ped, true)
-		end
-	end
-end)
-]]--
 AddEventHandler("osm-gameplay:enteredVehicle", function()
 	SendNUIMessage({action = "hudCarPos"})
 end)
@@ -322,9 +274,3 @@ RegisterNUICallback('postValues', function(data, cb)
     TriggerServerEvent("osmhealthui:save", data)
     cb('ok')
 end)
-
--- AddEventHandler("osm-userinterface:queryFromServer", function()
--- 	QBCore.Functions.TriggerCallback("osmhealthui:getOffsets", function(data)
--- 		SendNUIMessage({action = 'readvalues', values = data})
--- 	end)
--- end)
