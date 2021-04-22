@@ -25,6 +25,21 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
 end)
 
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(500)
+		if isLoggedIn then 
+			QBCore.Functions.GetPlayerData(function(PlayerData)
+				if PlayerData then
+					hunger = PlayerData.metadata["hunger"]
+					thirst = PlayerData.metadata["thirst"]
+					stress = PlayerData.metadata["stress"]
+				end
+			end)
+		end
+	end
+end)
+
 
 local toghud = true
 
@@ -56,20 +71,6 @@ RegisterCommand('hud', function(source, args, rawCommand)
 	})
 end)
 
-Citizen.CreateThread(function()
-	while true do
-		if isLoggedIn then 
-			QBCore.Functions.GetPlayerData(function(PlayerData)
-				if PlayerData then
-					hunger = PlayerData.metadata["hunger"]
-					thirst = PlayerData.metadata["thirst"]
-					stress = PlayerData.metadata["stress"]
-				end
-			end)
-		end
-		Citizen.Wait(500)
-	end
-end)
 
 RegisterNetEvent('hud:toggleui')
 AddEventHandler('hud:toggleui', function(show)
@@ -130,10 +131,10 @@ Citizen.CreateThread(function()
                     hunger = hunger,
                     thirst = thirst,
                     stress = stress,
-					armour = GetPedArmour(PlayerPedId()),
-					health = GetEntityHealth(PlayerPedId()) - 100,
-					oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
-                    })
+		    armour = GetPedArmour(PlayerPedId()),
+		    health = GetEntityHealth(PlayerPedId()) - 100,
+		    oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
+                 })
 			Citizen.Wait(500)
 		else
 			Citizen.Wait(1000)
