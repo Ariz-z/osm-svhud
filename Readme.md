@@ -23,3 +23,6 @@ SVRP Server Inspired HuD for QBUS Servers. I tried my level best to fix it, add 
 - The Cash and Bank system has been adapted to Chat Messages and NOTIFY Functions due to the fact, that am NOOB at HTML and CSS and couldn't bring it to the top right of the screen. If someone fixes / makes that, please share. 
 
 #### I will provide support **ONLY FOR QBUS BASE**. Don't ask me for support directly for Customized / Renamed Cores.
+
+#### Other Credits
+Boomer, FK Kalo and Lovesh for contributing/reporting bugs/testing. 
