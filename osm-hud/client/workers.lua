@@ -69,9 +69,9 @@ Citizen.CreateThread(function()
                 QBCore.Functions.Notify('Stress gained', "primary", 2000)
                 TriggerServerEvent('qb-hud:Server:UpdateStress', StressGain)
                 StressGain = 0
-            end
+            end 
         end
-        
+
         Citizen.Wait(2000)
     end
 end)
