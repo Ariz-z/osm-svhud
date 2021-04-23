@@ -21,7 +21,6 @@ end)
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
-    toghud = true
 end)
 
 Citizen.CreateThread(function()
