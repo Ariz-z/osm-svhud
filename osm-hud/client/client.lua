@@ -2,15 +2,12 @@ QBCore = nil
 
 isLoggedIn = true
 
-Citizen.CreateThread(function() 
+Citizen.CreateThread(function()
     while true do
         Citizen.Wait(10)
         if QBCore == nil then
-            TriggerEvent("QBCore:GetObject", function(obj) QBCore = obj end)    
+            TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
             Citizen.Wait(200)
-        end
-        if QBCore ~= nil then
-            return
         end
     end
 end)
@@ -18,17 +15,19 @@ end)
 RegisterNetEvent("QBCore:Client:OnPlayerUnload")
 AddEventHandler("QBCore:Client:OnPlayerUnload", function()
     isLoggedIn = false
+    toghud = false
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
+    toghud = true
 end)
 
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(500)
-		if isLoggedIn then 
+		Citizen.Wait(300)
+		if QBCore ~= nil and isLoggedIn then 
 			QBCore.Functions.GetPlayerData(function(PlayerData)
 				if PlayerData then
 					hunger = PlayerData.metadata["hunger"]
@@ -40,10 +39,27 @@ Citizen.CreateThread(function()
 	end
 end)
 
+Citizen.CreateThread(function()
+while true do
+	Citizen.Wait(550)
+		if QBCore ~= nil and isLoggedIn then 
+			SendNUIMessage({
+			    action = "updateStatusHud",
+			    show = getShowHud(),
+			    hunger = hunger,
+			    thirst = thirst,
+			    stress = stress,
+			    armour = GetPedArmour(PlayerPedId()),
+			    health = GetEntityHealth(PlayerPedId()) - 100,
+			    oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
+			 })
+		end
+
+	end
+end)
+
 
 local toghud = true
-
-local lastFadeOutDetection = 0
 
 function getShowHud()
   if IsScreenFadedOut() then
@@ -122,26 +138,6 @@ Citizen.CreateThread(function()
     end
 end)
 
-Citizen.CreateThread(function()
-	while true do
-		if isLoggedIn then 
-                SendNUIMessage({
-                    action = "updateStatusHud",
-                    show = getShowHud(),
-                    hunger = hunger,
-                    thirst = thirst,
-                    stress = stress,
-		    armour = GetPedArmour(PlayerPedId()),
-		    health = GetEntityHealth(PlayerPedId()) - 100,
-		    oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
-                 })
-			Citizen.Wait(500)
-		else
-			Citizen.Wait(1000)
-		end
-
-	end
-end)
 
 local stats = {
 	playerHealth = 0,
