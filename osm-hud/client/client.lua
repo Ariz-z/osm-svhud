@@ -2,6 +2,10 @@ QBCore = nil
 
 isLoggedIn = true
 
+local Hunger = 100
+local Thirst = 100
+local Stress = 0
+
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(10)
@@ -23,19 +27,15 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     isLoggedIn = true
 end)
 
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(300)
-		if QBCore ~= nil and isLoggedIn then 
-			QBCore.Functions.GetPlayerData(function(PlayerData)
-				if PlayerData then
-					hunger = PlayerData.metadata["hunger"]
-					thirst = PlayerData.metadata["thirst"]
-					stress = PlayerData.metadata["stress"]
-				end
-			end)
-		end
-	end
+RegisterNetEvent('hud:client:UpdateStress')
+AddEventHandler('hud:client:UpdateStress', function(newStress)
+    Stress = newStress
+end)
+
+RegisterNetEvent("hud:client:UpdateNeeds")
+AddEventHandler("hud:client:UpdateNeeds", function(newHunger, newThirst)
+    Hunger = newHunger
+    Thirst = newThirst
 end)
 
 Citizen.CreateThread(function()
@@ -45,9 +45,9 @@ while true do
 			SendNUIMessage({
 			    action = "updateStatusHud",
 			    show = getShowHud(),
-			    hunger = hunger,
-			    thirst = thirst,
-			    stress = stress,
+			    hunger = Hunger,
+			    thirst = Thirst,
+			    stress = Stress,
 			    armour = GetPedArmour(PlayerPedId()),
 			    health = GetEntityHealth(PlayerPedId()) - 100,
 			    oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
@@ -67,11 +67,6 @@ function getShowHud()
 
   return toghud and GetGameTimer() > lastFadeOutDetection + 2000
 end
-
-RegisterNetEvent("QBCore:player:onLogout")
-AddEventHandler("QBCore:player:onLogout", function()
-    ShowHud = false
-end)
 
 RegisterCommand('hud', function(source, args, rawCommand)
     if toghud then
@@ -156,8 +151,6 @@ Citizen.CreateThread(function()
 				stats.inVehicle = true
 				stats.enteringVehicle = false
 
-				TriggerEvent("osm-gameplay:enteredVehicle")
-
 				local v = GetVehiclePedIsIn(ped)
 
 				Citizen.CreateThread(function()
@@ -205,27 +198,7 @@ AddEventHandler("osm-gameplay:exitVehicle", function()
 	SendNUIMessage({action = "regularPos"})
 end)
 
-AddEventHandler("osm-gameplay:statUpdate", function(name, value)
-	if name == "health" then
-        SendNUIMessage({
-            action = 'updateStatusHud',
-            show = getShowHud(),
-            health = value - 100
-        })
-	elseif name == "armor" then
-        SendNUIMessage({
-            action = 'updateStatusHud',
-            show = getShowHud(),
-            armour = value
-        })
-	elseif name == "oxygen" then
-        SendNUIMessage({
-            action = 'updateStatusHud',
-            show = getShowHud(),
-            oxygen = value
-        })
-	end
-end)
+
 
 RegisterNetEvent('qb-hud:client:ProximityActive')
 AddEventHandler('qb-hud:client:ProximityActive', function(active)
@@ -252,21 +225,4 @@ AddEventHandler("osm-carhud:engineStatus", function(status)
 		action = 'toggleCarHud',
 		toggle = status,
 	})
-end)
-
-AddEventHandler("osm-ui:adjust", function(field, value)
-	SendNUIMessage({
-		action = 'adjust',
-		field = field,
-		value = value
-	})
-end)
-
-AddEventHandler("osmhealthui:saveToServer", function()
-	SendNUIMessage({action = 'postvalues'})
-end)
-
-RegisterNUICallback('postValues', function(data, cb)
-    TriggerServerEvent("osmhealthui:save", data)
-    cb('ok')
 end)
