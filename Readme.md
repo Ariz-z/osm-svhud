@@ -3,7 +3,7 @@ SVRP Server Inspired HuD for QBUS Servers. I tried my level best to fix it, add 
 
 
 ### [DISCORD SUPPORT SERVER | BOOST TO SUPPORT ME :)](https://discord.gg/jrNxkpVaJU)
-##### Special Thanks to Ariz#0001 for Patiently Testing the Script and Sharing Previews. <3
+### Huge Thanks to Ariz#0001 for Patiently Testing the Script and Sharing Previews. <3
 
 **Previews** : 
 [Normal](https://cdn.discordapp.com/attachments/829799717691981854/834133413820497920/unknown.png) , 
