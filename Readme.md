@@ -9,6 +9,13 @@ SVRP Server Inspired HuD for QBUS Servers. I tried my level best to fix it, add 
 [Normal](https://cdn.discordapp.com/attachments/829799717691981854/834133413820497920/unknown.png) , 
 [CarHud](https://media.discordapp.net/attachments/829799717691981854/834133626090160178/unknown.png)
 
+**FEATURES**
+- Working Hunger, Thirst, Stress system. 
+- Dynamic Increase Mechanics for HUNGER and THIRST
+- Weapon Synced Stress System 
+- Overspeeding Vehicles Stress System also active. 
+- Better than ANY OTHER leaked KWK or other QBUS Based SVRP Huds.
+
 ### Setup
 - Stop all existing HUD and Related Scripts.
 - You need to Start a total of 3 Resources : **osm-carhud, osm-hud, and fh4map**. 
