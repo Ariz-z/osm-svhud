@@ -6,11 +6,11 @@ local Hunger = 100
 local Thirst = 100
 local Stress = 0
 
-Citizen.CreateThread(function()
+Citizen.CreateThread(function() 
     while true do
         Citizen.Wait(10)
         if QBCore == nil then
-            TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
+            TriggerEvent("QBCore:GetObject", function(obj) QBCore = obj end)    
             Citizen.Wait(200)
         end
     end
@@ -38,27 +38,9 @@ AddEventHandler("hud:client:UpdateNeeds", function(newHunger, newThirst)
     Thirst = newThirst
 end)
 
-Citizen.CreateThread(function()
-while true do
-	Citizen.Wait(550)
-		if QBCore ~= nil and isLoggedIn then 
-			SendNUIMessage({
-			    action = "updateStatusHud",
-			    show = getShowHud(),
-			    hunger = Hunger,
-			    thirst = Thirst,
-			    stress = Stress,
-			    armour = GetPedArmour(PlayerPedId()),
-			    health = GetEntityHealth(PlayerPedId()) - 100,
-			    oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
-			 })
-		end
-
-	end
-end)
-
-
 local toghud = true
+
+local lastFadeOutDetection = 0
 
 function getShowHud()
   if IsScreenFadedOut() then
@@ -67,6 +49,28 @@ function getShowHud()
 
   return toghud and GetGameTimer() > lastFadeOutDetection + 2000
 end
+
+
+Citizen.CreateThread(function()
+	while true do
+		if isLoggedIn then 
+                SendNUIMessage({
+                    action = "updateStatusHud",
+                    show = getShowHud(),
+                    hunger = Hunger,
+                    thirst = Thirst,
+                    stress = Stress,
+					armour = GetPedArmour(PlayerPedId()),
+					health = GetEntityHealth(PlayerPedId()) - 100,
+					oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
+                    })
+			Citizen.Wait(500)
+		else
+			Citizen.Wait(1000)
+		end
+
+	end
+end)
 
 RegisterCommand('hud', function(source, args, rawCommand)
     if toghud then
@@ -80,7 +84,6 @@ RegisterCommand('hud', function(source, args, rawCommand)
 		show = getShowHud()
 	})
 end)
-
 
 RegisterNetEvent('hud:toggleui')
 AddEventHandler('hud:toggleui', function(show)
@@ -151,6 +154,8 @@ Citizen.CreateThread(function()
 				stats.inVehicle = true
 				stats.enteringVehicle = false
 
+				TriggerEvent("osm-gameplay:enteredVehicle")
+
 				local v = GetVehiclePedIsIn(ped)
 
 				Citizen.CreateThread(function()
@@ -198,7 +203,27 @@ AddEventHandler("osm-gameplay:exitVehicle", function()
 	SendNUIMessage({action = "regularPos"})
 end)
 
-
+AddEventHandler("osm-gameplay:statUpdate", function(name, value)
+	if name == "health" then
+        SendNUIMessage({
+            action = 'updateStatusHud',
+            show = getShowHud(),
+            health = value - 100
+        })
+	elseif name == "armor" then
+        SendNUIMessage({
+            action = 'updateStatusHud',
+            show = getShowHud(),
+            armour = value
+        })
+	elseif name == "oxygen" then
+        SendNUIMessage({
+            action = 'updateStatusHud',
+            show = getShowHud(),
+            oxygen = value
+        })
+	end
+end)
 
 RegisterNetEvent('qb-hud:client:ProximityActive')
 AddEventHandler('qb-hud:client:ProximityActive', function(active)
@@ -225,4 +250,21 @@ AddEventHandler("osm-carhud:engineStatus", function(status)
 		action = 'toggleCarHud',
 		toggle = status,
 	})
+end)
+
+AddEventHandler("osm-ui:adjust", function(field, value)
+	SendNUIMessage({
+		action = 'adjust',
+		field = field,
+		value = value
+	})
+end)
+
+AddEventHandler("osmhealthui:saveToServer", function()
+	SendNUIMessage({action = 'postvalues'})
+end)
+
+RegisterNUICallback('postValues', function(data, cb)
+    TriggerServerEvent("osmhealthui:save", data)
+    cb('ok')
 end)

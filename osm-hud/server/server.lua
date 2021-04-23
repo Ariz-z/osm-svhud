@@ -1,14 +1,6 @@
 QBCore = nil
 TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
 
-
-
-QBCore.Commands.Add("cash", "Check je cash", {}, false, function(source, args)
-	local src = source
-	local xPlayer = QBCore.Functions.GetPlayer(src)
-	TriggerClientEvent('hud:client:ShowMoney', source, xPlayer['PlayerData']['money']['cash'])
-end)
-
 QBCore.Commands.Add("cash", "Money in Cash", {}, false, function(source, args)
     TriggerClientEvent('hud:client:ShowMoney', source, "cash")
 end)
@@ -91,11 +83,3 @@ AddEventHandler('qb-hud:Server:RelieveStress', function(amount)
 end)
 
 
-
-QBCore.Commands.Add("incstress", "Check je cash", {}, false, function(source, args)
-	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-
-    Player.Functions.SetMetaData("stress", 70)
-    
-end)

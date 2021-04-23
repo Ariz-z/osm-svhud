@@ -117,7 +117,6 @@ Citizen.CreateThread(function()
             Citizen.Wait(200)
         end
         if QBCore ~= nil then
-            --TriggerEvent("hud:client:SetMoney")
             return
         end
     end
@@ -156,6 +155,21 @@ AddEventHandler("timeheader", function(h,m)
     time = h .. ":" .. m
 end)
 
+Citizen.CreateThread(function()
+    while true do
+		 local wait = 1000
+        if QBCore ~= nil and isLoggedIn and QBHud.Show then
+            if IsPedInAnyVehicle(PlayerPedId(), false) then
+                speed = GetEntitySpeed(GetVehiclePedIsIn(PlayerPedId(), false)) * 3.6
+                if speed >= 250 then
+                    TriggerServerEvent('qb-hud:Server:GainStress', math.random(2, 3))
+                end
+            end
+        end
+        Citizen.Wait(1500)
+    end
+end)
+
 local hudswitch
 Citizen.CreateThread(function()
 	while true do
@@ -174,28 +188,24 @@ Citizen.CreateThread(function()
 			end
 
 			if IsControlJustReleased(0, 29) then
-				if not seatbeltState then
-					QBCore.Functions.Notify("Gordel vast", "success")
+				if not seatbeltState and vehicleClass ~= 8 then
+					QBCore.Functions.Notify("Seat Belt Fastened", "success")
 					TriggerEvent('InteractSound_CL:PlayOnOne','carbuckle',0.3)
 					TriggerEvent("osm-carhud:seatbelt", true)
 					SendNUIMessage({action = "seatbelt", seatbelt = true})
 				else
-					QBCore.Functions.Notify("Gordel los", "error")
+					QBCore.Functions.Notify("Seat Belt Unfastened", "error")
 					TriggerEvent('InteractSound_CL:PlayOnOne','carunbuckle',0.3)
 					TriggerEvent("osm-carhud:seatbelt", false)
 					SendNUIMessage({action = "seatbelt", seatbelt = false})
 				end
 			end
 
-            if IsControlJustReleased(0, 311) then
+            if IsControlJustReleased(0, 19) then
 				if not cruisecontrol then
-					--QBCore.Functions.Notify("Cruisecontrol aan", "success")
 					TriggerEvent("osm-carhud:cruise", true)
-					--SendNUIMessage({action = "seatbelt", seatbelt = true})
 				else
-					--QBCore.Functions.Notify("Cruisecontrol uit", "error")
 					TriggerEvent("osm-carhud:cruise", false)
-					--SendNUIMessage({action = "seatbelt", seatbelt = false})
 				end
 			end
 		end
