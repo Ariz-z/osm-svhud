@@ -99,25 +99,11 @@ AddEventHandler('hud:toggleui', function(show)
 	})
 end)
 
-local pauseMenu = false
-
-function GetShakeIntensity(stresslevel)
+function GetShakeIntensity(Stress)
     local retval = 0.05
     for k, v in pairs(QBStress.Intensity["shake"]) do
-        if stresslevel >= v.min and stresslevel < v.max then
-            retval = v.intensity
-            break
-        end
-    end
-    return retval
-end
-
-
-function GetEffectInterval(stresslevel)
-    local retval = 60000
-    for k, v in pairs(QBStress.EffectInterval) do
         if Stress >= v.min and Stress < v.max then
-            retval = v.timeout
+            retval = v.intensity
             break
         end
     end
@@ -127,9 +113,8 @@ end
 Citizen.CreateThread(function()
     while true do
         local ped = PlayerPedId()
-        local Wait = GetEffectInterval(stress)
-        if stress >= 100 then
-            local ShakeIntensity = GetShakeIntensity(stress)
+        if Stress >= 95 then
+            local ShakeIntensity = 100
             local FallRepeat = math.random(2, 4)
             local RagdollTimeout = (FallRepeat * 1750)
             ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', ShakeIntensity)
@@ -149,14 +134,17 @@ Citizen.CreateThread(function()
                 ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', ShakeIntensity)
                 SetFlash(0, 0, 200, 750, 200)
             end
-        elseif stress >= QBStress.MinimumStress then
+        elseif Stress >= 70 then
             local ShakeIntensity = GetShakeIntensity(stress)
             ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', ShakeIntensity)
             SetFlash(0, 0, 500, 2500, 500)
         end
-        Citizen.Wait(1000)
+        Citizen.Wait(2000)
     end
 end)
+
+
+local pauseMenu = false
 
 Citizen.CreateThread(function()
     while true do
