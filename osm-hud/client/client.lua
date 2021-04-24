@@ -101,6 +101,50 @@ end)
 
 local pauseMenu = false
 
+function GetEffectInterval(stresslevel)
+    local retval = 60000
+    for k, v in pairs(QBStress.EffectInterval) do
+        if Stress >= v.min and Stress < v.max then
+            retval = v.timeout
+            break
+        end
+    end
+    return retval
+end
+
+Citizen.CreateThread(function()
+    while true do
+        local ped = PlayerPedId()
+        local Wait = GetEffectInterval(stress)
+        if stress >= 100 then
+            local ShakeIntensity = GetShakeIntensity(stress)
+            local FallRepeat = math.random(2, 4)
+            local RagdollTimeout = (FallRepeat * 1750)
+            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', ShakeIntensity)
+            SetFlash(0, 0, 500, 3000, 500)
+
+            if not IsPedRagdoll(ped) and IsPedOnFoot(ped) and not IsPedSwimming(ped) then
+                local player = PlayerPedId()
+                SetPedToRagdollWithFall(player, RagdollTimeout, RagdollTimeout, 1, GetEntityForwardVector(player), 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+            end
+
+            Citizen.Wait(500)
+            for i = 1, FallRepeat, 1 do
+                Citizen.Wait(750)
+                DoScreenFadeOut(200)
+                Citizen.Wait(1000)
+                DoScreenFadeIn(200)
+                ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', ShakeIntensity)
+                SetFlash(0, 0, 200, 750, 200)
+            end
+        elseif stress >= QBStress.MinimumStress then
+            local ShakeIntensity = GetShakeIntensity(stress)
+            ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', ShakeIntensity)
+            SetFlash(0, 0, 500, 2500, 500)
+        end
+        Citizen.Wait(1000)
+    end
+end)
 
 Citizen.CreateThread(function()
     while true do
