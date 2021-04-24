@@ -29,6 +29,10 @@ AddEventHandler('qb-hud:Server:UpdateStress', function(StressGain)
         if newStress > 100 then
             newStress = 100
         end
+
+if newStress > 70 then 
+	     TriggerClientEvent("hud:client:shake", src)
+	end 
         Player.Functions.SetMetaData("stress", newStress)
 		TriggerClientEvent("hud:client:UpdateStress", src, newStress)
 	end
@@ -52,6 +56,10 @@ AddEventHandler('qb-hud:Server:UpdateStress', function(StressGain)
         if newStress > 100 then
             newStress = 100
         end
+
+	if newStress > 70 then 
+	     TriggerClientEvent("hud:client:shake", src)
+	end 
         Player.Functions.SetMetaData("stress", newStress)
 		TriggerClientEvent("hud:client:UpdateStress", src, newStress)
 	end
@@ -114,6 +122,11 @@ AddEventHandler('qb-hud:Server:RelieveStress', function(amount)
         if newStress > 100 then
             newStress = 100
         end
+
+if newStress > 70 then 
+	     TriggerClientEvent("hud:client:shake", src)
+	end 
+
         Player.Functions.SetMetaData("stress", newStress)
         TriggerClientEvent("hud:client:UpdateStress", src, newStress)
         TriggerClientEvent('QBCore:Notify', src, 'Decreased stress')
