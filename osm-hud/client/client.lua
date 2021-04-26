@@ -269,15 +269,33 @@ AddEventHandler("osm-gameplay:statUpdate", function(name, value)
 	end
 end)
 
-RegisterNetEvent('qb-hud:client:ProximityActive')
-AddEventHandler('qb-hud:client:ProximityActive', function(active)
-	
-	SendNUIMessage({
-		action = 'voicestate',
-		state = active
-    })
+Citizen.CreateThread(function ()
+	while true do
+		local isTalking = NetworkIsPlayerTalking(PlayerId())
+
+		if isTalking then
+			TriggerEvent('mumble:voiceState', true)
+		elseif not isTalking then
+			TriggerEvent('mumble:voiceState', false)
+		end
+		
+		Citizen.Wait(10)
+	end
 end)
 
+AddEventHandler("mumble:voiceState", function(state)
+	SendNUIMessage({
+		action = 'voicestate',
+		state = state
+	})
+end)
+
+AddEventHandler("mumble:voiceMode", function(mode)
+	SendNUIMessage({
+		action = 'voicemode',
+		mode = (mode == 1) and "whisper" or (mode == 2) and "speak" or "loud"
+	})
+end)
 
 AddEventHandler("osm-carhud:carData", function(data)
 	SendNUIMessage({
