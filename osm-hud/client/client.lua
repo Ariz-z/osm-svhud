@@ -175,7 +175,7 @@ Citizen.CreateThread(function()
             DisplayRadar(0)
         end
 
-        Citizen.Wait(1000)
+        Citizen.Wait(2000)
     end
 end)
 
@@ -279,7 +279,7 @@ Citizen.CreateThread(function ()
 			TriggerEvent('mumble:voiceState', false)
 		end
 		
-		Citizen.Wait(10)
+		Citizen.Wait(500)
 	end
 end)
 
