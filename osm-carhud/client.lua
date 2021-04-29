@@ -496,6 +496,15 @@ function drawRct(x,y,width,height,r,g,b,a)
     DrawRect(x + width/2, y + height/2, width, height, r, g, b, a)
 end
 
+RegisterNetEvent('osm-hud:client:ToggleHarness')
+AddEventHandler('osm-hud:client:ToggleHarness', function(toggle)
+    SendNUIMessage({
+        action = "harness",
+        toggle = toggle
+    })
+end)
+
+
 function HideHUDThisFrame()
     HideHelpTextThisFrame()
     HideHudAndRadarThisFrame()
