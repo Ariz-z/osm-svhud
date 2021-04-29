@@ -1,6 +1,30 @@
 var dragTarget = null;
 var dragOriginal = null;
 var inTutorial = false;
+
+(() => {
+	PSHud = {};
+
+	PSHud.ToggleHarness = function(data) {
+        if (data.toggle) {
+            $(".car-seatbelt-info").html('&nbsp;&nbsp;&nbsp;&nbsp;<span class="seatbelt-text">Harness</div>');
+        } else {
+            $(".car-seatbelt-info").html('&nbsp;&nbsp;&nbsp;&nbsp;<img src="./seatbelt-on.png">');
+        }
+    }
+
+	window.onload = function(e) {
+        window.addEventListener('message', function(event) {
+            switch(event.data.action) {
+                case "harness":
+                    PSHud.ToggleHarness(event.data);
+                    break;
+
+			}
+		})
+	}
+})
+
 $(document).ready(function() {
     window.addEventListener('message', function(event) {
         var data = event.data;
