@@ -133,6 +133,29 @@ var c2bottomCur = 0;
 var horizontalDist = 0;
 var verticalDist = 0;
 
+(() => {
+	PSHud = {};
+
+	PSHud.ToggleHarness = function(data) {
+        if (data.toggle) {
+            $(".car-seatbelt-info").html('&nbsp;&nbsp;&nbsp;&nbsp;<span class="seatbelt-text">Harness</div>');
+        } else {
+            $(".car-seatbelt-info").html('&nbsp;&nbsp;&nbsp;&nbsp;<img src="./seatbelt-on.png">');
+        }
+    }
+
+	window.onload = function(e) {
+        window.addEventListener('message', function(event) {
+            switch(event.data.action) {
+                case "harness":
+                    PSHud.ToggleHarness(event.data);
+                    break;
+
+			}
+		})
+	}
+})
+
 function handleAdjust(field, value) {
 	if(field == "left") {
 		c2leftCur = value;
