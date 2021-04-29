@@ -278,6 +278,13 @@ AddEventHandler('qb-hud:client:ProximityActive', function(active)
     })
 end)
 
+RegisterNetEvent('qb-hud:client:ToggleHarness')
+AddEventHandler('qb-hud:client:ToggleHarness', function(toggle)
+    SendNUIMessage({
+        action = "harness",
+        toggle = toggle
+    })
+end)
 
 AddEventHandler("osm-carhud:carData", function(data)
 	SendNUIMessage({
