@@ -62,7 +62,7 @@ Citizen.CreateThread(function()
                     stress = Stress,
 					armour = GetPedArmour(PlayerPedId()),
 					health = GetEntityHealth(PlayerPedId()) - 100,
-					oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 4,
+					oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId()) * 10,
                     })
 			Citizen.Wait(500)
 		else
