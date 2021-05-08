@@ -170,47 +170,23 @@ Citizen.CreateThread(function()
     end
 end)
 
-local hudswitch
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(7)
-
-		local player = GetPlayerPed(-1)
-
-		-- SEATBELT
-		if IsPedInAnyVehicle(player, false) then
-			local vehicle = GetVehiclePedIsIn(player, false)
-			local vehicleClass = GetVehicleClass(vehicle)
-
-			if seatbeltState then 
-				DisableControlAction(27, 75, true)
-				DisableControlAction(0, 75, true)
-			end
-
-			if IsControlJustReleased(0, 29) then
-				if not seatbeltState and vehicleClass ~= 8 then
-					QBCore.Functions.Notify("Seat Belt Fastened", "success")
-					TriggerEvent('InteractSound_CL:PlayOnOne','carbuckle',0.3)
-					TriggerEvent("osm-carhud:seatbelt", true)
-					SendNUIMessage({action = "seatbelt", seatbelt = true})
-				else
-					QBCore.Functions.Notify("Seat Belt Unfastened", "error")
-					TriggerEvent('InteractSound_CL:PlayOnOne','carunbuckle',0.3)
-					TriggerEvent("osm-carhud:seatbelt", false)
-					SendNUIMessage({action = "seatbelt", seatbelt = false})
-				end
-			end
-
-            if IsControlJustReleased(0, 19) then
-				if not cruisecontrol then
-					TriggerEvent("osm-carhud:cruise", true)
-				else
-					TriggerEvent("osm-carhud:cruise", false)
-				end
-			end
-		end
-	end
+RegisterNetEvent("seatbelt:client:ToggleSeatbelt")
+AddEventHandler("seatbelt:client:ToggleSeatbelt", function(toggle)
+    if toggle == nil then
+        seatbeltState = not seatbeltState
+        SendNUIMessage({
+            action = "seatbelt",
+            seatbelt = seatbeltState,
+        })
+    else
+        seatbeltState = toggle
+        SendNUIMessage({
+            action = "seatbelt",
+            seatbelt = toggle,
+        })
+    end
 end)
+
 Citizen.CreateThread(function()
     local x, y, z = table.unpack(GetEntityCoords(PlayerPedId(), true))
     local currentStreetHash, intersectStreetHash = GetStreetNameAtCoord(x, y, z, currentStreetHash, intersectStreetHash)
